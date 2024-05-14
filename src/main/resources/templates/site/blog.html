@@ -16,7 +16,6 @@
 
 <main role="main-inner-wrapper" class="container">
 
-
     <div class="row">
 
 
@@ -27,7 +26,7 @@
 
                 <header>
 
-                    <h2><span>Blog</span> write by luis</h2>
+                    <h2><span>Blog</span> write by Kevin Zhong</h2>
 
                 </header>
 
@@ -51,7 +50,7 @@
 
                                         </div>
 
-                                        <img th:src="${commons.show_thumb(article.content) ?:commons.randomBlogPic(1322)}" alt=""
+                                        <img th:src="${article.titlePic}" alt=""
                                              class="img-responsive"/>
 
                                     </figure>
@@ -95,8 +94,11 @@
 
                                         </div>
 
-                                        <img th:src="${commons.show_thumb(article.content) ?:commons.randomBlogPic(1221)}" alt=""
+                                        <img th:src="${article.titlePic}" alt=""
                                              class="img-responsive"/>
+
+<!--                                        <img th:src="${commons.show_thumb(article.content) ?:commons.randomBlogPic(1221)}" alt=""-->
+<!--                                             class="img-responsive"/>-->
 
                                     </figure>
 

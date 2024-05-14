@@ -18,15 +18,18 @@
     <section class="col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
       <article role="pge-title-content">
         <header>
-          <h2><span>Luis</span> A Java Developer.</h2>
+          <h2><span>Kevin Zhong</span> A Java Developer.</h2>
         </header>
-        <p>maker of things for the web app, always focused on elegant simplicity, relentlessly learning by making mistakes.</p>
+        <p>with an enduring interest in Coding and Write Blog</p>
       </article>
     </section>
     <th:block th:each="archive,archiveStat : ${archives.list}">
       <th:block th:if="${archiveStat.index == 1}">
         <section class="col-xs-12 col-sm-6 col-md-6 col-lg-6 grid">
-          <figure class="effect-oscar"> <img th:src="${commons.show_thumb(archive.content)}" alt="" class="img-responsive"/>
+        <!-- @{'/site/images/about-images/header.jpg'}-->
+          <figure class="effect-oscar">
+<!--            <img th:src="${commons.show_thumb(archive.content)}" alt="" class="img-responsive"/>-->
+            <img th:src="@{'/site/images/about-images/header.jpg'}" alt="" class="img-responsive"/>
             <figcaption>
               <h2><th:block th:text="${archive.title}" ></th:block></h2>
               <p><th:block th:utext="${commons.fmtdate_en(archive.created)}"></th:block></p>
@@ -43,7 +46,9 @@
         <th:block th:each="archive,archiveStat : ${archives.list}">
           <th:block th:if="${archiveStat.index != 1 && archiveStat.index % 2 == 0}">
             <li>
-              <figure class="effect-oscar"> <img th:src="${commons.show_thumb(archive.content)}" alt="" class="img-responsive"/>
+              <figure class="effect-oscar">
+                <img th:src="@{'/site/images/about-images/header.jpg'}" alt="" class="img-responsive"/>
+<!--                <img th:src="${commons.show_thumb(archive.content)}" alt="" class="img-responsive"/>-->
                 <figcaption>
                   <h2><th:block th:text="${archive.title}" ></th:block></h2>
                   <p><th:block th:utext="${commons.fmtdate_en(archive.created)}"></th:block></p>

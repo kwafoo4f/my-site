@@ -95,7 +95,7 @@ public class HomeController extends BaseController{
         request.setAttribute("articles", articles);//文章列表
         request.setAttribute("type", "articles");
         request.setAttribute("active", "blog");
-//        this.blogBaseData(request, contentCond);//获取公共分类标签等数据
+        this.blogBaseData(request, contentCond);//获取公共分类标签等数据
         return "site/blog";
     }
 
