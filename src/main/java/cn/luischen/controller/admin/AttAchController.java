@@ -1,6 +1,6 @@
 package cn.luischen.controller.admin;
 
-import cn.luischen.api.QiniuCloudService;
+import cn.luischen.api.MinioHelper;
 import cn.luischen.constant.ErrorConstant;
 import cn.luischen.constant.Types;
 import cn.luischen.constant.WebConst;
@@ -11,16 +11,17 @@ import cn.luischen.model.UserDomain;
 import cn.luischen.service.attach.AttAchService;
 import cn.luischen.utils.APIResponse;
 import cn.luischen.utils.Commons;
+import cn.luischen.utils.FileUtil;
 import cn.luischen.utils.TaleUtils;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +35,7 @@ import java.io.IOException;
  * Created by winterchen on 2018/4/30.
  */
 @Api("附件相关接口")
+@Slf4j
 @Controller
 @RequestMapping("admin/attach")
 public class AttAchController {
@@ -46,8 +48,7 @@ public class AttAchController {
     @Autowired
     private AttAchService attAchService;
     @Autowired
-    private QiniuCloudService qiniuCloudService;
-
+    private MinioHelper minioHelper;
 
 
     @ApiOperation("文件管理首页")
@@ -60,7 +61,7 @@ public class AttAchController {
             @RequestParam(name = "limit", required = false, defaultValue = "12")
             int limit,
             HttpServletRequest request
-    ){
+    ) {
         PageInfo<AttAchDto> atts = attAchService.getAtts(page, limit);
         request.setAttribute("attachs", atts);
         request.setAttribute(Types.ATTACH_URL.getType(), Commons.site_option(Types.ATTACH_URL.getType(), Commons.site_url()));
@@ -69,37 +70,35 @@ public class AttAchController {
     }
 
 
-
-
     @ApiOperation("markdown文件上传")
     @PostMapping("/uploadfile")
     public void fileUpLoadToTencentCloud(HttpServletRequest request,
-                                                HttpServletResponse response,
-                                                @ApiParam(name = "editormd-image-file", value = "文件数组", required = true)
-                                                @RequestParam(name = "editormd-image-file", required = true)
-                                                MultipartFile file){
+                                         HttpServletResponse response,
+                                         @ApiParam(name = "editormd-image-file", value = "文件数组", required = true)
+                                         @RequestParam(name = "editormd-image-file", required = true)
+                                         MultipartFile file) {
         //文件上传
         try {
-            request.setCharacterEncoding( "utf-8" );
-            response.setHeader( "Content-Type" , "text/html" );
+            request.setCharacterEncoding("utf-8");
+            response.setHeader("Content-Type", "text/html");
 
-            String fileName = TaleUtils.getFileKey(file.getOriginalFilename()).replaceFirst("/","");
+            String fileName = FileUtil.genFileName(file.getOriginalFilename());
 
-            qiniuCloudService.upload(file, fileName);
+            String url = minioHelper.upload(file, fileName);
+
             AttAchDomain attAch = new AttAchDomain();
             HttpSession session = request.getSession();
             UserDomain sessionUser = (UserDomain) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
             attAch.setAuthorId(sessionUser.getUid());
             attAch.setFtype(TaleUtils.isImage(file.getInputStream()) ? Types.IMAGE.getType() : Types.FILE.getType());
             attAch.setFname(fileName);
-            String baseUrl = qiniuCloudService.QINIU_UPLOAD_SITE.endsWith("/") ? qiniuCloudService.QINIU_UPLOAD_SITE : qiniuCloudService.QINIU_UPLOAD_SITE + "/";
-            attAch.setFkey(baseUrl + fileName);
+            attAch.setFkey(url);
             attAchService.addAttAch(attAch);
-            response.getWriter().write( "{\"success\": 1, \"message\":\"上传成功\",\"url\":\"" + attAch.getFkey() + "\"}" );
+            response.getWriter().write("{\"success\": 1, \"message\":\"上传成功\",\"url\":\"" + attAch.getFkey() + "\"}");
         } catch (IOException e) {
             e.printStackTrace();
             try {
-                response.getWriter().write( "{\"success\":0}" );
+                response.getWriter().write("{\"success\":0}");
             } catch (IOException e1) {
                 throw BusinessException.withErrorCode(ErrorConstant.Att.UPLOAD_FILE_FAIL)
                         .withErrorMessageArguments(e.getMessage());
@@ -113,28 +112,26 @@ public class AttAchController {
     @PostMapping(value = "upload")
     @ResponseBody
     public APIResponse<Void> uploadfilesUploadToCloud(HttpServletRequest request,
-                                          HttpServletResponse response,
-                                          @ApiParam(name = "file", value = "文件数组", required = true)
-                                          @RequestParam(name = "file", required = true)
-                                          MultipartFile[] files){
+                                                      HttpServletResponse response,
+                                                      @ApiParam(name = "file", value = "文件数组", required = true)
+                                                      @RequestParam(name = "file", required = true)
+                                                      MultipartFile[] files) {
         //文件上传
         try {
-            request.setCharacterEncoding( "utf-8" );
-            response.setHeader( "Content-Type" , "text/html" );
+            request.setCharacterEncoding("utf-8");
+            response.setHeader("Content-Type", "text/html");
 
             for (MultipartFile file : files) {
+                String fileName = FileUtil.genFileName(file.getOriginalFilename());
 
-                String fileName = TaleUtils.getFileKey(file.getOriginalFilename()).replaceFirst("/","");
-
-                qiniuCloudService.upload(file, fileName);
+                String url = minioHelper.upload(file, fileName);
                 AttAchDomain attAch = new AttAchDomain();
                 HttpSession session = request.getSession();
                 UserDomain sessionUser = (UserDomain) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
                 attAch.setAuthorId(sessionUser.getUid());
                 attAch.setFtype(TaleUtils.isImage(file.getInputStream()) ? Types.IMAGE.getType() : Types.FILE.getType());
                 attAch.setFname(fileName);
-                String baseUrl = qiniuCloudService.QINIU_UPLOAD_SITE.endsWith("/") ? qiniuCloudService.QINIU_UPLOAD_SITE : qiniuCloudService.QINIU_UPLOAD_SITE + "/";
-				attAch.setFkey(baseUrl + fileName);
+                attAch.setFkey(url);
                 attAchService.addAttAch(attAch);
             }
             return APIResponse.success();
@@ -153,11 +150,11 @@ public class AttAchController {
             @RequestParam(name = "id", required = true)
             Integer id,
             HttpServletRequest request
-    ){
+    ) {
         try {
             AttAchDto attAch = attAchService.getAttAchById(id);
             if (null == attAch)
-                throw BusinessException.withErrorCode(ErrorConstant.Att.DELETE_ATT_FAIL +  ": 文件不存在");
+                throw BusinessException.withErrorCode(ErrorConstant.Att.DELETE_ATT_FAIL + ": 文件不存在");
             attAchService.deleteAttAch(id);
             return APIResponse.success();
         } catch (Exception e) {

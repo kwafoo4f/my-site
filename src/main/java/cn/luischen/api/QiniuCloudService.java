@@ -22,7 +22,7 @@ import java.io.IOException;
  * Created by winterchen on 2018/5/1.
  */
 @Component
-public class QiniuCloudService {
+public class    QiniuCloudService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QiniuCloudService.class);
 

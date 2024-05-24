@@ -66,7 +66,9 @@
         <th:block th:each="archive,archiveStat : ${archives.list}">
           <th:block th:if="${archiveStat.index != 1 && archiveStat.index % 2 != 0}">
             <li>
-              <figure class="effect-oscar"> <img th:src="${commons.show_thumb(archive.content)}" alt="" class="img-responsive"/>
+              <figure class="effect-oscar">
+                <img th:src="${archive.content}" alt="" class="img-responsive"/>
+<!--                <img th:src="${commons.show_thumb(archive.content)}" alt="" class="img-responsive"/>-->
                 <figcaption>
                   <h2><th:block th:text="${archive.title}" ></th:block></h2>
                   <p><th:block th:utext="${commons.fmtdate_en(archive.created)}"></th:block></p>

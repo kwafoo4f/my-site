@@ -4,6 +4,7 @@ import cn.luischen.constant.WebConst;
 import cn.luischen.controller.admin.AttAchController;
 import cn.luischen.exception.BusinessException;
 import cn.luischen.model.UserDomain;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.Extension;
 import org.commonmark.ext.gfm.tables.TablesExtension;
@@ -359,6 +360,7 @@ public class TaleUtils {
      * @param imageFile
      * @return
      */
+    @SneakyThrows
     public static boolean isImage(InputStream imageFile) {
         try {
             Image img = ImageIO.read(imageFile);
@@ -368,6 +370,10 @@ public class TaleUtils {
             return true;
         } catch (Exception e) {
             return false;
+        } finally {
+            if (imageFile != null) {
+                imageFile.close();
+            }
         }
     }
 
