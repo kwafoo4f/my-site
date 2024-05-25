@@ -37,7 +37,7 @@ import java.io.IOException;
 @Api("附件相关接口")
 @Slf4j
 @Controller
-@RequestMapping("admin/attach")
+@RestController("admin/attach")
 public class AttAchController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AttAchController.class);
@@ -161,5 +161,14 @@ public class AttAchController {
             e.printStackTrace();
             throw BusinessException.withErrorCode(e.getMessage());
         }
+    }
+
+    @ApiOperation("生成预签名URL")
+    @GetMapping("/presignedUrl")
+    @ResponseBody
+    @CrossOrigin(origins = "*")
+    public APIResponse<String> presignedUrl(@RequestParam("objectName") String objectName) {
+        String url = minioHelper.presignedUrl(objectName);
+        return APIResponse.success(url);
     }
 }

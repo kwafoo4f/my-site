@@ -4,7 +4,6 @@ package cn.luischen.interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -19,7 +18,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(baseInterceptor);
+        registry.addInterceptor(baseInterceptor)
+                .excludePathPatterns(Pattern.getInstance().defaultPattern().toList())
+                .addPathPatterns("/**");
     }
 
 }

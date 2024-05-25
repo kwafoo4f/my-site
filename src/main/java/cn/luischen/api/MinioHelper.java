@@ -1,10 +1,8 @@
 package cn.luischen.api;
 
 import cn.luischen.exception.BusinessException;
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
+import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 上传文件到minin
@@ -63,6 +62,28 @@ public class MinioHelper {
         if (!bucketExists(bucket)) {
             makeBucket(bucket);
         }
+    }
+
+    /**
+     * 生成预签名URL
+     *
+     * @param objectName
+     * @return
+     */
+    public String presignedUrl(String objectName) {
+        try {
+            String presignedObjectUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                    .method(Method.PUT)
+                    .bucket(BUCKET)
+                    .object(objectName)
+                    .expiry(60, TimeUnit.SECONDS)
+                    .build());
+            return presignedObjectUrl;
+        } catch (Exception e) {
+            log.error("生成预签名URL失败!", e);
+            throw new BusinessException("生成预签名URL失败!");
+        }
+
     }
 
     public String upload(MultipartFile file, String fileName) {
