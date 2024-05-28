@@ -68,6 +68,13 @@
                                        th:value="${contents!=null and contents.title!=null }?${contents.title}: ''"/>
                             </div>
 
+                            <div class="form-group col-md-6" style="padding: 0 10px 0 0;">
+                                <input type="text" class="form-control" placeholder="请输入文章主页图片地址" name="titlePic"
+                                       required="required"
+                                       aria-required="true"
+                                       th:value="${contents!=null and contents.titlePic!=null }?${contents.titlePic}: ''"/>
+                            </div>
+
                             <div class="form-group col-md-6" style="padding: 0 0 0 10px;">
                                 <select id="multiple-type" class="select2 form-control"
                                         data-placeholder="请选择文章类型..">

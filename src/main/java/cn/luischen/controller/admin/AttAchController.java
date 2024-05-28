@@ -37,7 +37,6 @@ import java.io.IOException;
 @Api("附件相关接口")
 @Slf4j
 @Controller
-@RestController
 @RequestMapping("admin/attach")
 public class AttAchController {
 
