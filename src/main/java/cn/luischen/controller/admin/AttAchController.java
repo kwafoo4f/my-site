@@ -37,7 +37,8 @@ import java.io.IOException;
 @Api("附件相关接口")
 @Slf4j
 @Controller
-@RestController("admin/attach")
+@RestController
+@RequestMapping("admin/attach")
 public class AttAchController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AttAchController.class);

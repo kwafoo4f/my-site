@@ -22,21 +22,20 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class MinioHelper {
     private MinioClient minioClient;
-    private static final Logger LOGGER = LoggerFactory.getLogger(MinioHelper.class);
 
-    @Value("${minio.accesskey:XZZArPkF025hduDRg7JE}")
+    @Value("${minio.accesskey}")
     private String ACCESS_KEY;
-    @Value("${minio.serectkey:b6MZhSU9zmx0q7cmPfrLUfeFDf0auXoVlUOqPYgO}")
+    @Value("${minio.serectkey}")
     private String SECRET_KEY;
     /**
      * 仓库
      */
-    @Value("${minio.bucket:my-blog}")
+    @Value("${minio.bucket}")
     private String BUCKET;
     /**
      * 外网访问地址
      */
-    @Value("${minio.endpoint:http://127.0.0.1:9000}")
+    @Value("${minio.endpoint}")
     public String ENDPOINT;
 
     public boolean bucketExists(String bucket) {

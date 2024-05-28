@@ -68,5 +68,9 @@ pagehelper:
 swagger:
   show: false
 
-
+minio:
+  accesskey: eI1PPmAXT5edcwwMrhVF
+  serectkey: C1BduGydqVTgsLYJqwK8yMdP1ijDW6EmzhzJUbDQ
+  bucket: my-blog
+  endpoint: http://47.109.104.82:9000
 

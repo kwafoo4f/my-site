@@ -68,6 +68,15 @@ logging:
 swagger:
   show: true
 
+minio:
+  accesskey: XZZArPkF025hduDRg7JE
+  serectkey: b6MZhSU9zmx0q7cmPfrLUfeFDf0auXoVlUOqPYgO
+  bucket: my-blog
+  endpoint: http://47.109.104.82:9090
+
+
+
+
 qiniu:
   accesskey: ""
   serectkey: ""
